@@ -5,18 +5,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.pburdelak.randomcityapp.R
 import com.pburdelak.randomcityapp.databinding.ActivityMainBinding
+import com.pburdelak.randomcityapp.screen.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
-
-    private var _binding: ActivityMainBinding? = null
-    private val binding: ActivityMainBinding
-        get() = _binding as ActivityMainBinding
+class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
 
@@ -24,10 +21,5 @@ class MainActivity : AppCompatActivity() {
         val theme = super.getTheme()
         theme.applyStyle(R.style.Theme_RandomCityApp, true)
         return theme
-    }
-
-    override fun onDestroy() {
-        _binding = null
-        super.onDestroy()
     }
 }
