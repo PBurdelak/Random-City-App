@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation_fullscreen"
+    app:startDestination="@id/destination_list">
+
+    <fragment
+        android:id="@+id/destination_list"
+        android:name="com.pburdelak.randomcityapp.screen.list.ListFragment" >
+
+        <action
+            android:id="@+id/action_details"
+            app:launchSingleTop="true"
+            app:destination="@id/destination_details" >
+
+        </action>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/destination_details"
+        android:name="com.pburdelak.randomcityapp.screen.details.DetailsFragment" />
+
+</navigation>
