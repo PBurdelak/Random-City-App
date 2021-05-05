@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">@color/white</color>
+    <color name="colorPrimaryDark">@color/pattens_blue</color>
+    <color name="colorSecondary">@color/link_water_light</color>
+    <color name="colorAccent">@color/downy</color>
+    <color name="statusBarColor">@color/colorPrimaryDark</color>
+    <color name="app_background">@color/white</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="pattens_blue">#D4DFF0</color>
+    <color name="link_water_light">#F6F9FD</color>
+    <color name="downy">#6CCCC5</color>
+
+</resources>
