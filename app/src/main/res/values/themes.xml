@@ -5,4 +5,8 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@color/app_background</item>
     </style>
+
+    <style name="Theme.RandomCityApp.Launcher">
+        <item name="android:windowBackground">@drawable/splash</item>
+    </style>
 </resources>
