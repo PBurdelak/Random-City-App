@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Toast;
+
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -26,6 +29,7 @@ import com.pburdelak.randomcityapp.R;
 import com.pburdelak.randomcityapp.databinding.FragmentDetailsBinding;
 import com.pburdelak.randomcityapp.model.CityColorCombination;
 import com.pburdelak.randomcityapp.screen.base.BaseFragment;
+
 import timber.log.Timber;
 
 public class DetailsFragment extends BaseFragment<FragmentDetailsBinding> implements OnMapReadyCallback {
@@ -56,6 +60,7 @@ public class DetailsFragment extends BaseFragment<FragmentDetailsBinding> implem
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        postponeEnterTransition();
         observeViewModel();
     }
 
@@ -133,8 +138,9 @@ public class DetailsFragment extends BaseFragment<FragmentDetailsBinding> implem
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
+        startPostponedEnterTrans();
         CityColorCombination item = viewModel.getCurrentItem().getValue();
-        if(item == null) return;
+        if (item == null) return;
         try {
             Address address = new Geocoder(requireContext()).getFromLocationName(item.getCity(), 1).get(0);
             LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
@@ -143,6 +149,19 @@ public class DetailsFragment extends BaseFragment<FragmentDetailsBinding> implem
         } catch (Exception exception) {
             Timber.e(exception);
             Toast.makeText(requireContext(), exception.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void startPostponedEnterTrans() {
+        ViewGroup parent = (ViewGroup) getView();
+        if (parent != null) {
+            ViewTreeObserver.OnPreDrawListener listener = () -> {
+                startPostponedEnterTransition();
+                return true;
+            };
+            parent.getViewTreeObserver().addOnPreDrawListener(listener);
+        } else {
+            startPostponedEnterTransition();
         }
     }
 }

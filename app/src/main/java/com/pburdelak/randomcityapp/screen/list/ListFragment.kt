@@ -3,6 +3,7 @@ package com.pburdelak.randomcityapp.screen.list
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.activityViewModels
 import com.pburdelak.randomcityapp.R
 import com.pburdelak.randomcityapp.databinding.FragmentListBinding
@@ -25,6 +26,11 @@ class ListFragment : BaseFragment<FragmentListBinding>() {
     private val mainActivity: MainActivity
         get() = activity as MainActivity
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.start()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -37,9 +43,14 @@ class ListFragment : BaseFragment<FragmentListBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.start()
+        postponeEnterTransition()
         configureLayout()
         observeViewModel()
+        (view.parent as? ViewGroup)?.doOnPreDraw {
+            startPostponedEnterTransition()
+        } ?: run {
+            startPostponedEnterTransition()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =
