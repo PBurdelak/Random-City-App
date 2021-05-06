@@ -34,11 +34,6 @@ interface BaseNavigator {
         }
     }
 
-    fun navigateUp(fragment: BaseFragment<*>) {
-        try {
-            fragment.findNavController().navigateUp()
-        } catch (e: Exception) {
-            e.log()
-        }
-    }
+    fun navigateUp() =
+        navController?.navigateUp()
 }
