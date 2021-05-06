@@ -25,6 +25,7 @@ class CombinationProducerViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
+        const val generatorPeriod = 5000L
         private val cities = listOf("Gdańsk", "Warszawa", "Poznań", "Białystok", "Wrocław", "Katowice", "Kraków")
         private val colors = listOf("Yellow", "Green", "Blue", "Red", "Black", "White")
     }
@@ -60,7 +61,7 @@ class CombinationProducerViewModel @Inject constructor(
         if (job?.isActive == true) return
         job = viewModelScope.launch(dispatcher) {
             while (true) {
-                delay(5000)
+                delay(generatorPeriod)
                 generateNext()
             }
         }
