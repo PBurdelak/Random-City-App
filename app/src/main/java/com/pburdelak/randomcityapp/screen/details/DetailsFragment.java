@@ -72,10 +72,30 @@ public class DetailsFragment extends BaseFragment<FragmentDetailsBinding> implem
     private void observeViewModel() {
         viewModel = new ViewModelProvider(requireActivity()).get(DetailsViewModel.class);
         final Observer<CityColorCombination> observer = item -> {
-            configureToolbar(item);
             getBinding().getRoot().getMapAsync(this);
         };
         viewModel.getCurrentItem().observe(getViewLifecycleOwner(), observer);
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        startPostponedEnterTrans();
+        CityColorCombination item = viewModel.getCurrentItem().getValue();
+        if (item == null) return;
+        configureToolbar(item);
+        try {
+            Address address = new Geocoder(requireContext()).getFromLocationName(item.getCity(), 1).get(0);
+            LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, 10f);
+            googleMap.animateCamera(update);
+        } catch (Exception exception) {
+            Timber.e(exception);
+            Toast.makeText(requireContext(), exception.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void startPostponedEnterTrans() {
+        getBinding().getRoot().getViewTreeObserver().addOnPreDrawListener(listener);
     }
 
     private void configureToolbar(CityColorCombination item) {
@@ -140,25 +160,5 @@ public class DetailsFragment extends BaseFragment<FragmentDetailsBinding> implem
             ColorDrawable drawable = new ColorDrawable(color);
             activity.getSupportActionBar().setBackgroundDrawable(drawable);
         }
-    }
-
-    @Override
-    public void onMapReady(@NonNull GoogleMap googleMap) {
-        startPostponedEnterTrans();
-        CityColorCombination item = viewModel.getCurrentItem().getValue();
-        if (item == null) return;
-        try {
-            Address address = new Geocoder(requireContext()).getFromLocationName(item.getCity(), 1).get(0);
-            LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, 10f);
-            googleMap.animateCamera(update);
-        } catch (Exception exception) {
-            Timber.e(exception);
-            Toast.makeText(requireContext(), exception.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void startPostponedEnterTrans() {
-        getBinding().getRoot().getViewTreeObserver().addOnPreDrawListener(listener);
     }
 }
