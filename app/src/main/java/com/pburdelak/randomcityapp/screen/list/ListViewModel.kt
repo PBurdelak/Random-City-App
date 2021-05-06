@@ -57,10 +57,11 @@ class ListViewModel @Inject constructor(
     }
 
     fun startGenerator() {
+        if (job?.isActive == true) return
         job = viewModelScope.launch(dispatcher) {
             while (true) {
-                generateNext()
                 delay(5000)
+                generateNext()
             }
         }
     }
