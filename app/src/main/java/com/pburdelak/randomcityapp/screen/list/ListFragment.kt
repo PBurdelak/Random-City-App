@@ -8,15 +8,18 @@ import com.pburdelak.randomcityapp.R
 import com.pburdelak.randomcityapp.databinding.FragmentListBinding
 import com.pburdelak.randomcityapp.model.CityColorCombination
 import com.pburdelak.randomcityapp.model.Error
+import com.pburdelak.randomcityapp.screen.activity.CombinationProducerViewModel
 import com.pburdelak.randomcityapp.screen.activity.MainActivity
 import com.pburdelak.randomcityapp.screen.base.BaseFragment
+import com.pburdelak.randomcityapp.screen.details.DetailsViewModel
 import com.pburdelak.randomcityapp.utils.livedata.observeEvent
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ListFragment : BaseFragment<FragmentListBinding>() {
 
-    private val viewModel: ListViewModel by activityViewModels()
+    private val viewModel: CombinationProducerViewModel by activityViewModels()
+    private val detailsViewModel: DetailsViewModel by activityViewModels()
     private var adapter: ListRVAdapter? = null
 
     private val mainActivity: MainActivity
@@ -66,10 +69,9 @@ class ListFragment : BaseFragment<FragmentListBinding>() {
         Toast.makeText(context, error.messageRes, Toast.LENGTH_LONG).show()
 
     private fun showDetails(item: CityColorCombination) {
-        if (mainActivity.isTabletLandscape) {
-            mainActivity.refreshDetailsFragment(item)
-        } else {
-            val direction = ListFragmentDirections.actionDetails(item)
+        detailsViewModel.setCurrentItem(item)
+        if (!mainActivity.isTabletLandscape) {
+            val direction = ListFragmentDirections.actionDetails()
             navigator?.navigateTo(direction)
         }
     }

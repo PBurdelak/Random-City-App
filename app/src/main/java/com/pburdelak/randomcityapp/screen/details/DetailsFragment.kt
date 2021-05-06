@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -27,13 +28,7 @@ import java.lang.Exception
 @AndroidEntryPoint
 class DetailsFragment : BaseFragment<FragmentDetailsBinding>(), OnMapReadyCallback {
 
-    private var item: CityColorCombination? = null
-
-    fun setItem(item: CityColorCombination) {
-        this.item = item
-        configureToolbar()
-        binding.root.getMapAsync(this)
-    }
+    private val viewModel: DetailsViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,15 +50,17 @@ class DetailsFragment : BaseFragment<FragmentDetailsBinding>(), OnMapReadyCallba
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (item ?: getItemFromArguments())?.let(this::setItem)
+        observeViewModel()
     }
 
-    private fun getItemFromArguments() = arguments?.let {
-        navArgs<DetailsFragmentArgs>().value.item
+    private fun observeViewModel() {
+        viewModel.currentItem.observe(viewLifecycleOwner) {
+            configureToolbar(it)
+            binding.root.getMapAsync(this)
+        }
     }
 
-    private fun configureToolbar() {
-        val item = item ?: return
+    private fun configureToolbar(item: CityColorCombination) {
         (activity as? AppCompatActivity)?.supportActionBar?.run {
             title = item.city
             val color = Color.parseColor(item.color)
@@ -115,7 +112,7 @@ class DetailsFragment : BaseFragment<FragmentDetailsBinding>(), OnMapReadyCallba
     }
 
     override fun onMapReady(map: GoogleMap) {
-        val item = item ?: return
+        val item = viewModel.currentItem.value ?: return
         try {
             val address = Geocoder(requireContext()).getFromLocationName(item.city, 1).first()
             val latLng = LatLng(address.latitude, address.longitude)

@@ -1,4 +1,4 @@
-package com.pburdelak.randomcityapp.screen.list
+package com.pburdelak.randomcityapp.screen.activity
 
 import androidx.lifecycle.*
 import com.pburdelak.randomcityapp.hilt.DispatchersDefault
@@ -19,7 +19,7 @@ import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class ListViewModel @Inject constructor(
+class CombinationProducerViewModel @Inject constructor(
     private val repository: ListRepository,
     @DispatchersDefault private val dispatcher: CoroutineDispatcher,
 ) : ViewModel() {

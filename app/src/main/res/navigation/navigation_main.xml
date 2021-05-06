@@ -21,12 +21,6 @@
     <fragment
         android:id="@+id/destination_details"
         android:name="com.pburdelak.randomcityapp.screen.details.DetailsFragment"
-        tools:layout="@layout/fragment_details">
-
-        <argument
-            android:name="item"
-            app:argType="com.pburdelak.randomcityapp.model.CityColorCombination" />
-
-    </fragment>
+        tools:layout="@layout/fragment_details"/>
 
 </navigation>

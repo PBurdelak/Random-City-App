@@ -13,10 +13,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.pburdelak.randomcityapp.R
 import com.pburdelak.randomcityapp.databinding.ActivityMainBinding
 import com.pburdelak.randomcityapp.databinding.ActivityMainMasterDetailsBinding
-import com.pburdelak.randomcityapp.model.CityColorCombination
 import com.pburdelak.randomcityapp.screen.base.BaseNavigator
 import com.pburdelak.randomcityapp.screen.details.DetailsFragment
-import com.pburdelak.randomcityapp.screen.list.ListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,11 +25,10 @@ class MainActivity :  AppCompatActivity(), BaseNavigator {
         private const val DETAILS_FRAGMENT_TAG = "DETAILS_FRAGMENT_TAG"
     }
 
-    private val viewModel: ListViewModel by viewModels()
+    private val viewModel: CombinationProducerViewModel by viewModels()
     private var toolbar: Toolbar? = null
 
     private var navHostFragment: NavHostFragment? = null
-    private var detailsFragment: DetailsFragment? = null
 
     override val navController: NavController?
         get() = navHostFragment?.navController
@@ -44,12 +41,7 @@ class MainActivity :  AppCompatActivity(), BaseNavigator {
         super.onCreate(savedInstanceState)
         setContentView(createView())
         configureToolbar()
-
-        if (savedInstanceState == null) {
-            setupMasterNavHostFragment()
-        } else {
-            navHostFragment = supportFragmentManager.findFragmentByTag(MASTER_NAV_HOST_TAG) as? NavHostFragment
-        }
+        setupMasterNavHostFragment(savedInstanceState)
         setupDetailsFragment()
     }
 
@@ -73,17 +65,29 @@ class MainActivity :  AppCompatActivity(), BaseNavigator {
         }.root
     }
 
-    private fun setupMasterNavHostFragment() {
-        navHostFragment = NavHostFragment.create(R.navigation.navigation_main).also {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container_view, it, MASTER_NAV_HOST_TAG)
-                .commitNow()
+    private fun setupMasterNavHostFragment(savedInstanceState: Bundle?) {
+        navHostFragment = if (savedInstanceState == null) {
+            createMasterFragment()
+        } else {
+            restoreMasterFragment()
+        }
+        if (isTabletLandscape && navController?.currentDestination?.id != R.id.destination_list) {
+            navController?.navigateUp()
         }
     }
 
+    private fun createMasterFragment() = NavHostFragment.create(R.navigation.navigation_main).also {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container_view, it, MASTER_NAV_HOST_TAG)
+            .commitNow()
+    }
+
+    private fun restoreMasterFragment() =
+        supportFragmentManager.findFragmentByTag(MASTER_NAV_HOST_TAG) as? NavHostFragment
+
     private fun setupDetailsFragment() {
         if (!isTabletLandscape) return
-        detailsFragment = restoreDetailsFragment() ?: createDetailsFragment()
+        restoreDetailsFragment() ?: createDetailsFragment()
     }
 
     private fun restoreDetailsFragment() =
@@ -120,14 +124,9 @@ class MainActivity :  AppCompatActivity(), BaseNavigator {
         super.onStop()
     }
 
-    fun refreshDetailsFragment(item: CityColorCombination) {
-        detailsFragment?.setItem(item)
-    }
-
     override fun onDestroy() {
         toolbar = null
         navHostFragment = null
-        detailsFragment = null
         super.onDestroy()
     }
 }
