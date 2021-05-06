@@ -1,5 +1,7 @@
 package com.pburdelak.randomcityapp.screen.details
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,20 +9,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.navigation.fragment.navArgs
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.pburdelak.randomcityapp.R
 import com.pburdelak.randomcityapp.databinding.FragmentDetailsBinding
 import com.pburdelak.randomcityapp.screen.base.BaseFragment
 import com.pburdelak.randomcityapp.utils.log
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Exception
-import java.util.*
 
 @AndroidEntryPoint
-class DetailsFragment: BaseFragment<FragmentDetailsBinding>(), OnMapReadyCallback {
+class DetailsFragment : BaseFragment<FragmentDetailsBinding>(), OnMapReadyCallback {
+
+    private val args: DetailsFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +48,16 @@ class DetailsFragment: BaseFragment<FragmentDetailsBinding>(), OnMapReadyCallbac
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        configureToolbar()
         binding.root.getMapAsync(this)
+    }
+
+    private fun configureToolbar() {
+        (activity as? AppCompatActivity)?.supportActionBar?.run {
+            title = args.item.city
+            val color = Color.parseColor(args.item.color)
+            setBackgroundDrawable(ColorDrawable(color))
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -76,13 +91,21 @@ class DetailsFragment: BaseFragment<FragmentDetailsBinding>(), OnMapReadyCallbac
     }
 
     override fun onDestroyView() {
+        setDefaultToolbarConfiguration()
         binding.root.onDestroy()
         super.onDestroyView()
     }
 
+    private fun setDefaultToolbarConfiguration() {
+        (activity as? AppCompatActivity)?.supportActionBar?.run {
+            val color = ContextCompat.getColor(requireContext(), R.color.toolbar_background)
+            setBackgroundDrawable(ColorDrawable(color))
+        }
+    }
+
     override fun onMapReady(map: GoogleMap) {
         try {
-            val address = Geocoder(requireContext()).getFromLocationName("Poznan", 1)[0]
+            val address = Geocoder(requireContext()).getFromLocationName(args.item.city, 1).first()
             val latLng = LatLng(address.latitude, address.longitude)
             val update = CameraUpdateFactory.newLatLngZoom(latLng, 10f)
             map.moveCamera(update)
