@@ -1,4 +1,4 @@
-package com.pburdelak.randomcityapp.screen.activity
+package com.pburdelak.randomcityapp.screen.list
 
 import androidx.lifecycle.*
 import com.pburdelak.randomcityapp.hilt.DispatchersDefault
@@ -10,12 +10,11 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(
+class ListViewModel @Inject constructor(
     @DispatchersDefault private val dispatcher: CoroutineDispatcher
 ): ViewModel() {
 

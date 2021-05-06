@@ -4,11 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ListAdapter
 import androidx.fragment.app.activityViewModels
 import com.pburdelak.randomcityapp.databinding.FragmentListBinding
 import com.pburdelak.randomcityapp.model.CityColorCombination
-import com.pburdelak.randomcityapp.screen.activity.MainActivityViewModel
 import com.pburdelak.randomcityapp.screen.base.BaseFragment
 import com.pburdelak.randomcityapp.utils.livedata.observeEvent
 import dagger.hilt.android.AndroidEntryPoint
@@ -16,7 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ListFragment: BaseFragment<FragmentListBinding>() {
 
-    private val viewModel: MainActivityViewModel by activityViewModels()
+    private val viewModel: ListViewModel by activityViewModels()
     private var adapter: ListRVAdapter? = null
 
     override fun onCreateView(

@@ -5,12 +5,13 @@ import androidx.activity.viewModels
 import com.pburdelak.randomcityapp.R
 import com.pburdelak.randomcityapp.databinding.ActivityMainBinding
 import com.pburdelak.randomcityapp.screen.base.BaseActivity
+import com.pburdelak.randomcityapp.screen.list.ListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
 
-    private val viewModel: MainActivityViewModel by viewModels()
+    private val viewModel: ListViewModel by viewModels()
 
     override var navGraphId: Int = R.navigation.navigation_main
     override var navHostFragmentContainerId: Int = R.id.fragment_container_view
