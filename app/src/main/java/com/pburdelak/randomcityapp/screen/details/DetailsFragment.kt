@@ -4,12 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import com.pburdelak.randomcityapp.databinding.FragmentDetailsBinding
 import com.pburdelak.randomcityapp.screen.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class DetailsFragment: BaseFragment<FragmentDetailsBinding>() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            navigator?.navigateUp()
+            remove()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
