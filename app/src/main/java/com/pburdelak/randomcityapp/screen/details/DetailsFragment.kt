@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -18,6 +19,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.pburdelak.randomcityapp.R
 import com.pburdelak.randomcityapp.databinding.FragmentDetailsBinding
+import com.pburdelak.randomcityapp.model.CityColorCombination
 import com.pburdelak.randomcityapp.screen.base.BaseFragment
 import com.pburdelak.randomcityapp.utils.log
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,7 +28,7 @@ import java.lang.Exception
 @AndroidEntryPoint
 class DetailsFragment : BaseFragment<FragmentDetailsBinding>(), OnMapReadyCallback {
 
-    private val args: DetailsFragmentArgs by navArgs()
+    private val viewModel: DetailsViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,14 +50,20 @@ class DetailsFragment : BaseFragment<FragmentDetailsBinding>(), OnMapReadyCallba
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        configureToolbar()
-        binding.root.getMapAsync(this)
+        observeViewModel()
     }
 
-    private fun configureToolbar() {
+    private fun observeViewModel() {
+        viewModel.currentItem.observe(viewLifecycleOwner) {
+            configureToolbar(it)
+            binding.root.getMapAsync(this)
+        }
+    }
+
+    private fun configureToolbar(item: CityColorCombination) {
         (activity as? AppCompatActivity)?.supportActionBar?.run {
-            title = args.item.city
-            val color = Color.parseColor(args.item.color)
+            title = item.city
+            val color = Color.parseColor(item.color)
             setBackgroundDrawable(ColorDrawable(color))
         }
     }
@@ -104,11 +112,12 @@ class DetailsFragment : BaseFragment<FragmentDetailsBinding>(), OnMapReadyCallba
     }
 
     override fun onMapReady(map: GoogleMap) {
+        val item = viewModel.currentItem.value ?: return
         try {
-            val address = Geocoder(requireContext()).getFromLocationName(args.item.city, 1).first()
+            val address = Geocoder(requireContext()).getFromLocationName(item.city, 1).first()
             val latLng = LatLng(address.latitude, address.longitude)
             val update = CameraUpdateFactory.newLatLngZoom(latLng, 10f)
-            map.moveCamera(update)
+            map.animateCamera(update)
         } catch (exception: Exception) {
             exception.log()
             Toast.makeText(requireContext(), exception.localizedMessage, Toast.LENGTH_LONG).show()
