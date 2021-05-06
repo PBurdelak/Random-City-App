@@ -36,6 +36,11 @@ public class DetailsFragment extends BaseFragment<FragmentDetailsBinding> implem
 
     private DetailsViewModel viewModel;
 
+    private ViewTreeObserver.OnPreDrawListener listener = () -> {
+        startPostponedEnterTransition();
+        return true;
+    };
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -122,6 +127,7 @@ public class DetailsFragment extends BaseFragment<FragmentDetailsBinding> implem
 
     @Override
     public void onDestroyView() {
+        getBinding().getRoot().getViewTreeObserver().removeOnPreDrawListener(listener);
         setDefaultToolbarConfiguration();
         getBinding().getRoot().onDestroy();
         super.onDestroyView();
@@ -153,15 +159,6 @@ public class DetailsFragment extends BaseFragment<FragmentDetailsBinding> implem
     }
 
     private void startPostponedEnterTrans() {
-        ViewGroup parent = (ViewGroup) getView();
-        if (parent != null) {
-            ViewTreeObserver.OnPreDrawListener listener = () -> {
-                startPostponedEnterTransition();
-                return true;
-            };
-            parent.getViewTreeObserver().addOnPreDrawListener(listener);
-        } else {
-            startPostponedEnterTransition();
-        }
+        getBinding().getRoot().getViewTreeObserver().addOnPreDrawListener(listener);
     }
 }
