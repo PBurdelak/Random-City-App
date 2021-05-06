@@ -1,22 +1,22 @@
 package com.pburdelak.randomcityapp.screen.list
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ListAdapter
+import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import com.pburdelak.randomcityapp.R
 import com.pburdelak.randomcityapp.databinding.FragmentListBinding
 import com.pburdelak.randomcityapp.model.CityColorCombination
-import com.pburdelak.randomcityapp.screen.activity.MainActivityViewModel
+import com.pburdelak.randomcityapp.model.Error
 import com.pburdelak.randomcityapp.screen.base.BaseFragment
 import com.pburdelak.randomcityapp.utils.livedata.observeEvent
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
-class ListFragment: BaseFragment<FragmentListBinding>() {
+class ListFragment : BaseFragment<FragmentListBinding>() {
 
-    private val viewModel: MainActivityViewModel by activityViewModels()
+    private val viewModel: ListViewModel by activityViewModels()
     private var adapter: ListRVAdapter? = null
 
     override fun onCreateView(
@@ -25,13 +25,23 @@ class ListFragment: BaseFragment<FragmentListBinding>() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentListBinding.inflate(inflater, container, false)
+        setHasOptionsMenu(true)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.start()
         configureLayout()
         observeViewModel()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =
+        inflater.inflate(R.menu.menu_toolbar, menu)
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        viewModel.clearData()
+        return true
     }
 
     private fun configureLayout() {
@@ -42,11 +52,15 @@ class ListFragment: BaseFragment<FragmentListBinding>() {
     }
 
     private fun observeViewModel() {
+        viewModel.errorMessageEvent.observeEvent(viewLifecycleOwner, this::showError)
         viewModel.detailsEvent.observeEvent(viewLifecycleOwner, this::showDetails)
         viewModel.list.observe(viewLifecycleOwner) {
             adapter?.replaceData(it)
         }
     }
+
+    private fun showError(error: Error) =
+        Toast.makeText(context, error.messageRes, Toast.LENGTH_LONG).show()
 
     private fun showDetails(item: CityColorCombination) {
         val direction = ListFragmentDirections.actionDetails(item)
