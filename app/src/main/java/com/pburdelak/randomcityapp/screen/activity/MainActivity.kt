@@ -2,6 +2,8 @@ package com.pburdelak.randomcityapp.screen.activity
 
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import com.pburdelak.randomcityapp.R
 import com.pburdelak.randomcityapp.databinding.ActivityMainBinding
 import com.pburdelak.randomcityapp.screen.base.BaseActivity
@@ -22,6 +24,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
+
+        navController?.let { navController ->
+            val appBarConfiguration = AppBarConfiguration(navController.graph)
+            binding.toolbar.setupWithNavController(navController, appBarConfiguration)
+        }
     }
 
     override fun onStart() {

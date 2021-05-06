@@ -1,12 +1,14 @@
 package com.pburdelak.randomcityapp.repository
 
+import com.pburdelak.randomcityapp.hilt.DispatchersIO
 import com.pburdelak.randomcityapp.model.CityColorCombination
 import com.pburdelak.randomcityapp.room.CityColorCombinationDao
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
+import javax.inject.Inject
 
-class Repository(
-    private val dispatcher: CoroutineDispatcher,
+class Repository @Inject constructor(
+    @DispatchersIO private val dispatcher: CoroutineDispatcher,
     private val cityColorCombinationDao: CityColorCombinationDao
 ): ListRepository {
 

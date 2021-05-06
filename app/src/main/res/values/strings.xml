@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Random City App</string>
+    <string name="error_retrieving">Error during retrieving data</string>
+    <string name="error_saving">Error during saving data</string>
+    <string name="error_deleting">Error during deleting data</string>
+    <string name="refresh">Refresh</string>
 </resources>

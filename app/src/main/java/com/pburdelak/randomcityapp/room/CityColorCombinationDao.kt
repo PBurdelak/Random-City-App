@@ -9,7 +9,7 @@ import com.pburdelak.randomcityapp.model.CityColorCombination
 @Dao
 interface CityColorCombinationDao {
 
-    @Query("SELECT * FROM city_color_combination")
+    @Query("SELECT * FROM city_color_combination ORDER BY city, creation_date")
     fun getAll(): List<CityColorCombination>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
