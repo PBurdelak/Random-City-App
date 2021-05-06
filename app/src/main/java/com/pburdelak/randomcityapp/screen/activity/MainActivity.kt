@@ -40,9 +40,9 @@ class MainActivity :  AppCompatActivity(), BaseNavigator {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(createView())
-        configureToolbar()
         setupMasterNavHostFragment(savedInstanceState)
         setupDetailsFragment()
+        configureToolbar()
     }
 
     private fun createView(): View {
