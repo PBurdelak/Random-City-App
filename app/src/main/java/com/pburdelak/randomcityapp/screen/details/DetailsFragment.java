@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
@@ -29,6 +30,7 @@ import com.pburdelak.randomcityapp.R;
 import com.pburdelak.randomcityapp.databinding.FragmentDetailsBinding;
 import com.pburdelak.randomcityapp.model.CityColorCombination;
 import com.pburdelak.randomcityapp.screen.base.BaseFragment;
+import com.pburdelak.randomcityapp.screen.base.BaseNavigator;
 
 import timber.log.Timber;
 
@@ -36,7 +38,7 @@ public class DetailsFragment extends BaseFragment<FragmentDetailsBinding> implem
 
     private DetailsViewModel viewModel;
 
-    private ViewTreeObserver.OnPreDrawListener listener = () -> {
+    private final ViewTreeObserver.OnPreDrawListener listener = () -> {
         startPostponedEnterTransition();
         return true;
     };
@@ -47,7 +49,10 @@ public class DetailsFragment extends BaseFragment<FragmentDetailsBinding> implem
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                getNavigator().navigateUp();
+                BaseNavigator navigator = getNavigator();
+                if (navigator != null) {
+                    navigator.navigateUp();
+                }
                 remove();
             }
         };
@@ -71,9 +76,7 @@ public class DetailsFragment extends BaseFragment<FragmentDetailsBinding> implem
 
     private void observeViewModel() {
         viewModel = new ViewModelProvider(requireActivity()).get(DetailsViewModel.class);
-        final Observer<CityColorCombination> observer = item -> {
-            getBinding().getRoot().getMapAsync(this);
-        };
+        final Observer<CityColorCombination> observer = item -> getBinding().getRoot().getMapAsync(this);
         viewModel.getCurrentItem().observe(getViewLifecycleOwner(), observer);
     }
 
@@ -100,11 +103,13 @@ public class DetailsFragment extends BaseFragment<FragmentDetailsBinding> implem
 
     private void configureToolbar(CityColorCombination item) {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
-        if (activity != null) {
-            activity.getSupportActionBar().setTitle(item.getCity());
+        if (activity == null) return;
+        ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(item.getCity());
             int color = Color.parseColor(item.getColor());
             ColorDrawable drawable = new ColorDrawable(color);
-            activity.getSupportActionBar().setBackgroundDrawable(drawable);
+            actionBar.setBackgroundDrawable(drawable);
         }
     }
 
@@ -155,10 +160,12 @@ public class DetailsFragment extends BaseFragment<FragmentDetailsBinding> implem
 
     private void setDefaultToolbarConfiguration() {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
-        if (activity != null) {
+        if (activity == null) return;
+        ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar != null) {
             int color = ContextCompat.getColor(requireContext(), R.color.toolbar_background);
             ColorDrawable drawable = new ColorDrawable(color);
-            activity.getSupportActionBar().setBackgroundDrawable(drawable);
+            actionBar.setBackgroundDrawable(drawable);
         }
     }
 }
