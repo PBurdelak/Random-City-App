@@ -7,7 +7,7 @@
     android:background="@color/lynch"
     android:clipToPadding="false"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/list_margin"
     android:paddingHorizontal="@dimen/list_margin"
+    android:paddingBottom="@dimen/list_margin"
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
     tools:listitem="@layout/item_list_element" />
