@@ -45,7 +45,7 @@ class ListRVAdapter(
         }
 
         fun bind(item: CityColorCombination) {
-            val color = Color.parseColor(item.color.toLowerCase(Locale.ROOT))
+            val color = Color.parseColor(item.color.lowercase(Locale.ROOT))
             binding.textName.text = item.city
             binding.textName.setTextColor(color)
             binding.textDate.text = formatter.format(item.creationDate)

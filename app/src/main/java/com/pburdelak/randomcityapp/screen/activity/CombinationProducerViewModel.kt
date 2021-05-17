@@ -8,13 +8,10 @@ import com.pburdelak.randomcityapp.repository.ListRepository
 import com.pburdelak.randomcityapp.utils.livedata.Event
 import com.pburdelak.randomcityapp.utils.livedata.setEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
@@ -60,7 +57,7 @@ class CombinationProducerViewModel @Inject constructor(
     fun startGenerator() {
         if (job?.isActive == true) return
         job = viewModelScope.launch(dispatcher) {
-            while (true) {
+            while (isActive) {
                 delay(generatorPeriod)
                 generateNext()
             }
@@ -91,7 +88,7 @@ class CombinationProducerViewModel @Inject constructor(
     fun stopGenerator() {
         job?.run {
             cancel()
-            job = null
+            this@CombinationProducerViewModel.job = null
         }
     }
 
