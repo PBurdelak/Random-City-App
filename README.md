@@ -1,5 +1,7 @@
 # Random City App
+Simple app for skill showcase
 
+On a tablet in landscape mode, it works in master-details mode.
 
 ### Requirements:
 
